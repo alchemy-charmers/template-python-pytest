@@ -1,0 +1,6 @@
+juju
+requests
+pytest
+pytest-asyncio
+mock
+flake8
