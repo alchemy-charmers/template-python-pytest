@@ -17,13 +17,13 @@ async def model():
 
 
 @pytest.fixture
-async def ${metadata.package.lower()}_app(model):
+async def ${fixture}_app(model):
     app = await model.deploy('local:', series='bionic')
     await model.block_until(lambda: app.status == 'active')
     return app
 
 
-async def test_framework(${metadata.package.lower()}_app):
+async def test_framework(${fixture}_app):
     assert True
 
 # def test_example_action(self, deploy, unit):
