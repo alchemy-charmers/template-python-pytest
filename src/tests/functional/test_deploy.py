@@ -23,7 +23,7 @@ async def ${fixture}_app(model):
     return app
 
 
-async def test_framework(${fixture}_app):
+async def test_deploy(${fixture}_app):
     assert True
 
 # def test_example_action(self, deploy, unit):
