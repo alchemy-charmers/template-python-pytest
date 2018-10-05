@@ -3,6 +3,8 @@ import pytest
 import mock
 
 
+# If layer options are used, add this to ${fixture}
+# and import layer in ${libfile}
 @pytest.fixture
 def mock_layers(monkeypatch):
     import sys
@@ -52,7 +54,6 @@ def mock_charm_dir(monkeypatch):
 
 @pytest.fixture
 def ${fixture}(tmpdir,
-               mock_layers,
                mock_hookenv_config,
                mock_charm_dir,
                monkeypatch):

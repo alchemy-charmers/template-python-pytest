@@ -1,5 +1,4 @@
-from charmhelpers.core import hookenv, host
-from charms import layer
+from charmhelpers.core import hookenv
 
 
 class ${libclass}():
