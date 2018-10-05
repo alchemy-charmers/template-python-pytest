@@ -45,28 +45,6 @@ def mock_remote_unit(monkeypatch):
     monkeypatch.setattr('${libfile}.hookenv.remote_unit', lambda: 'unit-mock/0')
 
 
-# Example mocking a subprocess call
-# @pytest.fixture
-# def mock_ports(monkeypatch, open_ports=''):
-#     def mports(*args, **kwargs):
-#         if args[0][0] == "opened-ports":
-#             return bytes(mports.open_ports, encoding='utf8')
-#         elif args[0][0] == "open-port":
-#             if args[0][1].lower() not in mports.open_ports:
-#                 mports.open_ports = mports.open_ports + args[0][1].lower() + '\n'
-#             return bytes(mports.open_ports, encoding='utf8')
-#         elif args[0][0] == "close-port":
-#             mports.open_ports = mports.open_ports.replace(args[0][1].lower() + '\n', '')
-#             return bytes(mports.open_ports, encoding='utf8')
-#         else:
-#             print("subprocess called with: {}".format(args[0]))
-#             return None
-#     mports.open_ports = open_ports
-#
-#     monkeypatch.setattr('${libfile}.subprocess.check_output', mports)
-#     monkeypatch.setattr('${libfile}.subprocess.check_call', mports)
-
-
 @pytest.fixture
 def mock_charm_dir(monkeypatch):
     monkeypatch.setattr('${libfile}.hookenv.charm_dir', lambda: '/mock/charm/dir')
