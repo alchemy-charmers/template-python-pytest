@@ -1,5 +1,5 @@
 # Overview
-This is a template for writting charms with unit and functional testing incldued
+This is a template for writting charms with unit and functional testing included
 from the start. It is meant to provide a quick start to creating a charm and
 encourage testing from the beginning.
 
