@@ -1,5 +1,6 @@
-import mock
 import imp
+
+import mock
 
 
 class TestActions():

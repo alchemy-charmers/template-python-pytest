@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 import pytest
-
 from juju.model import Model
 
 # Treat tests as coroutines

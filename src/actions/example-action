@@ -9,4 +9,3 @@ from ${libfile} import ${libclass}
 
 helper = ${libclass}()
 helper.action_function()
-

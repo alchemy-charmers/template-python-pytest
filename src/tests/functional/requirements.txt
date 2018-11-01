@@ -1,6 +1,6 @@
+flake8
 juju
-requests
+mock
 pytest
 pytest-asyncio
-mock
-flake8
+requests

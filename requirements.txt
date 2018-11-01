@@ -1,4 +1,5 @@
+charm-tools
 charmhelpers
 charms.reactive
-mock
-pytest
+pre-commit
+tox
