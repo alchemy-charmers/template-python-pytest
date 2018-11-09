@@ -2,3 +2,4 @@ charmhelpers
 charms.reactive
 mock
 pytest
+pytest-cov
