@@ -1,13 +1,13 @@
-REQUIREMENTS_FILE=requirements.txt
-REQUIREMENTS_OUT=requirements.txt.log
+ifndef JUJU_REPOSITORY
+	JUJU_REPOSITORY := $(shell pwd)
+	$(warning Warning JUJU_REPOSITORY was not set, defaulting to $(JUJU_REPOSITORY))
+endif
 
 help:
 	@echo "This project supports the following targets"
 	@echo ""
 	@echo " make help - show this text"
-	@echo " make all  - ensure that we are in a virtualenv "\
-		"and that our requirements"
-	@echo "             are installed and install the pre-commit hook"
+	@echo " make submodules - make sure that the submodules are up-to-date"
 	@echo " make lint - use pre-commit to ensure consistent layout"
 	@echo " make test - run the functional test, unittests and lint"
 	@echo " make unittest - run the tests defined in the unittest "\
@@ -22,26 +22,30 @@ help:
 	@echo " make setup - install the pre-commit hook"
 	@echo " make virtualenv - check that a virtualenv is active"
 
+submodules:
+	@echo "Cloning submodules"
+	@git submodule update --init --recursive
 
-all: setup requirements
-
-lint: virtualenv requirements
-	@${VIRTUAL_ENV}/bin/pre-commit run --all
+lint:
+	@-if [ -x `which pre-commit` ] ; then echo "Running pre-commit as linter";	pre-commit run --all || exit 0 ; fi
+	@echo "Running flake8"
+	@flake8 ./src
 
 test: unittest functionaltest lint
 
-unittest: virtualenv requirements
-	@cd src && ${VIRTUAL_ENV}/bin/tox -e unit
+unittest:
+	@cd src && tox -e unit
 
-functionaltest: virtualenv requirements
-	@cd src && ${VIRTUAL_ENV}/bin/tox -e functional
+functionaltest:
+	@cd src && tox -e functional
 
 build:
+	@echo "Building charm to base directory $(JUJU_REPOSITORY)"
 	@git describe --tags > ./src/repo-info
 	@LAYER_PATH=./layers INTERFACE_PATH=./interfaces\
-		charm build ./src --force
+		JUJU_REPOSITORY=$(JUJU_REPOSITORY) charm build ./src --force
 
-release: virtualenv lint clean build
+release: lint clean build
 	# Maybe add the command to push the build bundle to the store?
 	#
 	@echo "Charm is build, it can now be pushed to the store"
@@ -50,26 +54,9 @@ release: virtualenv lint clean build
 
 clean:
 	@echo "Cleaning files"
-	@rm -r src/.tox
-
-requirements: $(REQUIREMENTS_OUT)
-
-$(REQUIREMENTS_OUT): $(REQUIREMENTS_FILE)
-	pip install -r $(REQUIREMENTS_FILE) | tee $(REQUIREMENTS_OUT)
-
-setup: virtualenv
-	@${VIRTUAL_ENV}/bin/pre-commit install
-
-# This target is quite important. Using a virtualenv allows python packages to
-# be installed separate from the system packages. So installing all packages
-# in an virtualenv, ensures that e.g. the editor can use this virtualenv for
-# completion tasks.
-# It also allows to install specific versions of packages e.d. xenial released
-# python packages, while running bionic or comic.
-virtualenv:
-ifndef VIRTUAL_ENV
-	$(error No VIRTUAL_ENV defined)
-endif
+	@if [ -d src/.tox ] ; then rm -r src/slave/.tox ; fi
+	@if [ -d src/.pytest_cache ] ; then rm -r src/slave/.pytest_cache ; fi
 
 # The targets below don't depend on a file
-.PHONY: all lint test unittest functionaltest build release clean setup virtualenv help
+.PHONY: lint test unittest functionaltest build release clean help \
+	submodules
