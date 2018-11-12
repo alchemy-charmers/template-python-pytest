@@ -37,7 +37,7 @@ unittest:
 	@cd src && tox -e unit
 
 functionaltest:
-	@cd src && tox -e functional
+	@cd src && JUJU_REPOSITORY=$(JUJU_REPOSITORY) tox -e functional
 
 build:
 	@echo "Building charm to base directory $(JUJU_REPOSITORY)"
