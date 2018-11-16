@@ -1,5 +1,5 @@
 # Overview
-This is a template for writting charms with unit and functional testing included
+This is a template for writing charms with unit and functional testing included
 from the start. It is meant to provide a quick start to creating a charm and
 encourage testing from the beginning.
 
@@ -18,7 +18,7 @@ To build simply run the script
 
 ## Testing
 Testing is done via tox and there are two environments setup one for unit and
-one for functional testing. Each has a seperate requirements file to setup the
+one for functional testing. Each has a separate requirements file to setup the
 virtualenv that they will be run in. These are for test only requirements.
 
 ## Unit testing
@@ -49,7 +49,8 @@ This requires a controller and model be available to run the test in.
 
 ### Legacy
 The legacy testing relies on amulet testing, which has become outdated. It still
-works but I would like to look at moving to libjuju to remove the dependency.
+works but it would be preferable to look at moving to libjuju to remove the
+dependency.
 
 Amulet testing is run with tox via:
 ```bash
