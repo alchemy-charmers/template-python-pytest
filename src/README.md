@@ -10,7 +10,7 @@ This is the default template when creating a new charm with `charm create`.
 First, make sure you have [charm-tools][] installed:
 
 ```
-sudo apt-get install charm-tools
+sudo snap install charm
 ```
 
 Then just run the create command:

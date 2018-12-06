@@ -14,13 +14,11 @@ help:
 		"subdirectory"
 	@echo " make functionaltest - run the tests defined in the "\
 		"functional subdirectory"
-	@echo " make release - build the charm using the virtualenv"
+	@echo " make release - build the charm"
 	@echo " make clean - remove unneeded files"
 	@echo ""
 	@echo " the following targets are meant to be used by the Makefile"
 	@echo " make requirements - installs the requirements"
-	@echo " make setup - install the pre-commit hook"
-	@echo " make virtualenv - check that a virtualenv is active"
 
 submodules:
 	@echo "Cloning submodules"
