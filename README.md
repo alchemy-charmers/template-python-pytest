@@ -46,20 +46,3 @@ To run libjuju functional testing:
 tox -e functional
 ```
 This requires a controller and model be available to run the test in.
-
-### Legacy
-The legacy testing relies on amulet testing, which has become outdated. It still
-works but it would be preferable to look at moving to libjuju to remove the
-dependency.
-
-Amulet testing is run with tox via:
-```bash
-tox -e amulet
-```
-
-Note that amulet tests require installing the jujudeployer which can be
-installed via:
-```bash
-pip install bundletester
-```
-This will eventually be depreciated for libjuju
