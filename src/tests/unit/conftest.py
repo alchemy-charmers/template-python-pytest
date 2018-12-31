@@ -53,10 +53,7 @@ def mock_charm_dir(monkeypatch):
 
 
 @pytest.fixture
-def ${fixture}(tmpdir,
-               mock_hookenv_config,
-               mock_charm_dir,
-               monkeypatch):
+def ${fixture}(tmpdir, mock_hookenv_config, mock_charm_dir, monkeypatch):
     from $libfile import $libclass
     helper = ${libclass}()
 

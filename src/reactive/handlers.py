@@ -1,8 +1,9 @@
 from ${libfile} import ${libclass}
 from charmhelpers.core import hookenv
-from charms.reactive import set_flag, when, when_not
+from charms.reactive import set_flag, when_not
 
 helper = ${libclass}()
+
 
 @when_not('${metadata.package}.installed')
 def install_${metadata.package.replace('-', '_')}():
@@ -19,5 +20,5 @@ def install_${metadata.package.replace('-', '_')}():
     #  * https://github.com/juju-solutions/layer-basic#overview
     #
     #end raw
-    hookenv.status_set('active','')
+    hookenv.status_set('active', '')
     set_flag('${metadata.package}.installed')

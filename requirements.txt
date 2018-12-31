@@ -1,5 +1,0 @@
-charm-tools
-charmhelpers
-charms.reactive
-pre-commit
-tox

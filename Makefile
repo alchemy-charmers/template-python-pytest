@@ -8,53 +8,39 @@ help:
 	@echo ""
 	@echo " make help - show this text"
 	@echo " make submodules - make sure that the submodules are up-to-date"
-	@echo " make lint - use pre-commit to ensure consistent layout"
-	@echo " make test - run the functional test, unittests and lint"
-	@echo " make unittest - run the tests defined in the unittest "\
-		"subdirectory"
-	@echo " make functionaltest - run the tests defined in the "\
-		"functional subdirectory"
+	@echo " make lint - run flake8"
+	@echo " make test - run the unittests and lint"
+	@echo " make unittest - run the tests defined in the unittest subdirectory"
 	@echo " make release - build the charm"
 	@echo " make clean - remove unneeded files"
 	@echo ""
-	@echo " the following targets are meant to be used by the Makefile"
-	@echo " make requirements - installs the requirements"
 
 submodules:
 	@echo "Cloning submodules"
 	@git submodule update --init --recursive
 
 lint:
-	@-if [ -x `which pre-commit` ] ; then echo "Running pre-commit as linter";	pre-commit run --all || exit 0 ; fi
 	@echo "Running flake8"
-	@flake8 ./src
+	@cd src && tox -e lint
 
-test: unittest functionaltest lint
+test: unittest lint
 
 unittest:
 	@cd src && tox -e unit
 
-functionaltest:
-	@cd src && JUJU_REPOSITORY=$(JUJU_REPOSITORY) tox -e functional
-
 build:
 	@echo "Building charm to base directory $(JUJU_REPOSITORY)"
-	@git describe --tags > ./src/repo-info
+	@-git describe --tags > ./src/repo-info
 	@LAYER_PATH=./layers INTERFACE_PATH=./interfaces\
 		JUJU_REPOSITORY=$(JUJU_REPOSITORY) charm build ./src --force
 
-release: lint clean build
-	# Maybe add the command to push the build bundle to the store?
-	#
-	@echo "Charm is build, it can now be pushed to the store"
-	@echo "With the command:"
-	@echo " charm push ./src"
+release: clean build
+	@echo "Charm is built at $(JUJU_REPOSITORY)/builds"
 
 clean:
 	@echo "Cleaning files"
-	@if [ -d src/.tox ] ; then rm -r src/slave/.tox ; fi
-	@if [ -d src/.pytest_cache ] ; then rm -r src/slave/.pytest_cache ; fi
+	@if [ -d src/.tox ] ; then rm -r src/.tox ; fi
+	@if [ -d src/.pytest_cache ] ; then rm -r src/.pytest_cache ; fi
 
 # The targets below don't depend on a file
-.PHONY: lint test unittest functionaltest build release clean help \
-	submodules
+.PHONY: lint test unittest build release clean help submodules

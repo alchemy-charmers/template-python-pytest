@@ -1,15 +1,11 @@
-import os
-
 import pytest
 from juju.model import Model
 
 # Treat tests as coroutines
 pytestmark = pytest.mark.asyncio
 
-LOCAL_CHARM = os.path.join(os.environ['JUJU_REPOSITORY'], 'builds',
-    '$metadata.package')
+series = ['bionic']
 
-series = ['trusty', 'xenial', 'bionic']
 
 @pytest.fixture
 async def model():
@@ -20,8 +16,8 @@ async def model():
 
 
 @pytest.mark.parametrize('series', series)
-async def ${fixture}_app(model, series):
-    app = await model.deploy(LOCAL_CHARM, series=series)
+async def test_${fixture}_deploy(model, series):
+    app = await model.deploy('.', series=series)
     await model.block_until(lambda: app.status == 'active')
     assert True
 
