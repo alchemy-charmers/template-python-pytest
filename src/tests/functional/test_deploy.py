@@ -2,19 +2,16 @@ import os
 import pytest
 from juju.model import Model
 
-# Treat tests as coroutines
+# Treat all tests as coroutines
 pytestmark = pytest.mark.asyncio
 
 series = ['xenial', 'bionic']
 juju_repository = os.getenv('JUJU_REPOSITORY', '.').rstrip('/')
 
 
-@pytest.fixture
-async def model():
-    model = Model()
-    await model.connect_current()
-    yield model
-    await model.disconnect()
+###################
+# Custom fixtures #
+###################
 
 
 @pytest.fixture
@@ -41,6 +38,11 @@ async def test_${fixture}_deploy(model, series):
                        series=series,
                        application_name='${metadata.package}-{}'.format(series))
     assert True
+
+
+#########
+# Tests #
+#########
 
 
 async def test_${fixture}_status(apps, model):
