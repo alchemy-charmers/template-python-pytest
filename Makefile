@@ -1,6 +1,6 @@
 ifndef JUJU_REPOSITORY
-	JUJU_REPOSITORY := $(shell pwd)
-	$(warning Warning JUJU_REPOSITORY was not set, defaulting to $(JUJU_REPOSITORY))
+    JUJU_REPOSITORY := $(shell pwd)
+    $(warning Warning JUJU_REPOSITORY was not set, defaulting to $(JUJU_REPOSITORY))
 endif
 
 help:
