@@ -17,13 +17,14 @@ To build simply run the script
 ```
 
 ## Testing
-Testing is done via tox and there are two environments setup one for unit and
+Testing is done via tox and there are two environments setup, one for unit and
 one for functional testing. Each has a separate requirements file to setup the
-virtualenv that they will be run in. These are for test only requirements.
+virtualenv that they will be run in. These requirements are only needed for
+running the tests.
 
 ## Unit testing
-The unit testing is performed via pytest. Test are defined in the folder
-/tests/unit/ in the test_XXX.py
+Unit testing is performed via pytest. Tests are defined in
+/tests/unit/test_XXX.py
 
 To run unit test with tox run:
 ```bash
@@ -38,11 +39,15 @@ tested.
 
 ### Libjuju
 The currently supported method of functional testing uses libjuju to interact
-with juju and the units. The legacy method is only included until libjuju has
-some maturity as it has only recently been added to the template.
+with juju and the units.
 
 To run libjuju functional testing:
 ```bash
 tox -e functional
 ```
-This requires a controller and model be available to run the test in.
+This requires a controller; a temporary model will be created and torn down at
+the beginning and end of the testing session, respectively. A custom
+module-scoped event loop is provided as to support fixtures with scopes beyond
+'function'.
+
+Several generic fixtures are provided in conftest.py, and reuse is encouraged.
