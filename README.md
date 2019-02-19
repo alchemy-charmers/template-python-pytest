@@ -11,9 +11,9 @@ in the appropriate folder to the charm to allow tracking of versions for
 interfaces and layers. If an interface or layers is present in the folder it
 will be used instead of the upstream.
 
-To build simply run the script
+To build simply run the Makefile target
 ```bash
-./build.sh
+make build
 ```
 
 ## Testing
@@ -28,7 +28,7 @@ Unit testing is performed via pytest. Tests are defined in
 
 To run unit test with tox run:
 ```bash
-tox -e unit
+make unittest
 ```
 
 Out of the gate, unit testing just verifies that the testing framework is
@@ -43,7 +43,7 @@ with juju and the units.
 
 To run libjuju functional testing:
 ```bash
-tox -e functional
+make functional
 ```
 This requires a controller; a temporary model will be created and torn down at
 the beginning and end of the testing session, respectively. A custom
