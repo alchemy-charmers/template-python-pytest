@@ -1,3 +1,5 @@
+Note: This README is the one shown on GitHub before README.md.
+
 # Reactive Charm Template using Python
 
 This is a template for a reactive charm with handlers written in Python.
