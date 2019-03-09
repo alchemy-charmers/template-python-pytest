@@ -58,7 +58,7 @@ async def controller():
 
 
 @pytest.fixture(scope='module')
-async def model(controller):  # pylint: disable=redefined-outer-name
+async def model(controller):
     '''This model lives only for the duration of the test'''
     model_name = "functest-{}".format(uuid.uuid4())
     _model = await controller.add_model(model_name)
@@ -71,7 +71,7 @@ async def model(controller):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def get_app(model):  # pylint: disable=redefined-outer-name
+async def get_app(model):
     '''Returns the application requested'''
     async def _get_app(name):
         try:
@@ -82,7 +82,7 @@ async def get_app(model):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def get_unit(model):  # pylint: disable=redefined-outer-name
+async def get_unit(model):
     '''Returns the requested <app_name>/<unit_number> unit'''
     async def _get_unit(name):
         try:
@@ -94,7 +94,7 @@ async def get_unit(model):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def get_entity(get_unit, get_app):  # pylint: disable=redefined-outer-name
+async def get_entity(get_unit, get_app):
     '''Returns a unit or an application'''
     async def _get_entity(name):
         try:
@@ -108,7 +108,7 @@ async def get_entity(get_unit, get_app):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def run_command(get_unit):  # pylint: disable=redefined-outer-name
+async def run_command(get_unit):
     '''
     Runs a command on a unit.
 
@@ -127,7 +127,7 @@ async def run_command(get_unit):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def file_stat(run_command):  # pylint: disable=redefined-outer-name
+async def file_stat(run_command):
     '''
     Runs stat on a file
 
@@ -142,7 +142,7 @@ async def file_stat(run_command):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def file_contents(run_command):  # pylint: disable=redefined-outer-name
+async def file_contents(run_command):
     '''
     Returns the contents of a file
 
@@ -157,7 +157,7 @@ async def file_contents(run_command):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def reconfigure_app(get_app, model):  # pylint: disable=redefined-outer-name
+async def reconfigure_app(get_app, model):
     '''Applies a different config to the requested app'''
     async def _reconfigure_app(cfg, target):
         application = (
