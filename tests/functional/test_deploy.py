@@ -1,48 +1,58 @@
 import os
 import pytest
+import subprocess
 
 # Treat all tests as coroutines
 pytestmark = pytest.mark.asyncio
 
-series = ['xenial', 'bionic']
 juju_repository = os.getenv('JUJU_REPOSITORY', '.').rstrip('/')
+series = ['xenial',
+          'bionic',
+          pytest.param('cosmic', marks=pytest.mark.xfail(reason='canary')),
+          ]
+sources = [('local', '{}/builds/${metadata.package}'.format(juju_repository)),
+           # ('jujucharms', 'cs:...'),
+           ]
 
 
 # Custom fixtures
-@pytest.fixture
-async def apps(model):
-    apps = []
-    for entry in series:
-        app = model.applications['${metadata.package}-{}'.format(entry)]
-        apps.append(app)
-    return apps
+@pytest.fixture(params=series)
+def series(request):
+    return request.param
+
+
+@pytest.fixture(params=sources, ids=[s[0] for s in sources])
+def source(request):
+    return request.param
 
 
 @pytest.fixture
-async def units(apps):
-    units = []
-    for app in apps:
-        units.extend(app.units)
-    return units
+async def app(model, series, source):
+    app_name = '${metadata.package}-{}-{}'.format(series, source[0])
+    return await model._wait_for_new('application', app_name)
 
 
-@pytest.mark.parametrize('series', series)
-async def test_${fixture}_deploy(model, series):
+async def test_${fixture}_deploy(model, series, source):
     # Starts a deploy for each series
-    await model.deploy('{}/builds/${metadata.package}'.format(juju_repository),
-                       series=series,
-                       application_name='${metadata.package}-{}'.format(series))
+    # Using subprocess b/c libjuju fails with JAAS
+    # https://github.com/juju/python-libjuju/issues/221
+    application_name = '${metadata.package}-{}-{}'.format(series, source[0])
+    subprocess.check_call(['juju',
+                           'deploy',
+                           source[1],
+                           '-m', model.info.name,
+                           application_name,
+                           ])
 
 
 # Tests
-async def test_${fixture}_status(apps, model):
+async def test_${fixture}_status(model, app):
     # Verifies status for all deployed series of the charm
-    for app in apps:
-        await model.block_until(lambda: app.status == 'active')
+    await model.block_until(lambda: app.status == 'active')
 
 
-async def test_example_action(units):
-    for unit in units:
-        action = await unit.run_action('example-action')
-        action = await action.wait()
-        assert action.status == 'completed'
+async def test_example_action(app):
+    unit = app.units[0]
+    action = await unit.run_action('example-action')
+    action = await action.wait()
+    assert action.status == 'completed'

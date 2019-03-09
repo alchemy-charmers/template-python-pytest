@@ -25,7 +25,7 @@ unittest:
 	@tox -e unit
 
 functional: build
-	@tox -e functional
+	@PYTEST_KEEP_MODEL=$(PYTEST_KEEP_MODEL) tox -e functional
 
 build:
 	@echo "Building charm to base directory $(JUJU_REPOSITORY)"

@@ -14,6 +14,7 @@ import json
 import os
 import uuid
 import pytest
+import subprocess
 import juju
 from juju.controller import Controller
 from juju.errors import JujuError
@@ -36,7 +37,7 @@ EOF
 '''
 
 
-@pytest.yield_fixture(scope='module')
+@pytest.fixture(scope='module')
 def event_loop():
     '''Override the default pytest event loop to allow for fixtures using a
     broader scope'''
@@ -62,9 +63,13 @@ async def model(controller):
     '''This model lives only for the duration of the test'''
     model_name = "functest-{}".format(uuid.uuid4())
     _model = await controller.add_model(model_name)
+    # https://github.com/juju/python-libjuju/issues/267
+    subprocess.check_call(['juju', 'models'])
+    while model_name not in await controller.list_models():
+        await asyncio.sleep(1)
     yield _model
     await _model.disconnect()
-    if not os.getenv('test_preserve_model'):
+    if not os.getenv('PYTEST_KEEP_MODEL'):
         await controller.destroy_model(model_name)
         while model_name in await controller.list_models():
             await asyncio.sleep(1)
