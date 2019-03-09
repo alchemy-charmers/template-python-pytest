@@ -61,7 +61,7 @@ async def controller():
 @pytest.fixture(scope='module')
 async def model(controller):
     '''This model lives only for the duration of the test'''
-    model_name = "functest-{}".format(uuid.uuid4())
+    model_name = "functest-{}".format(str(uuid.uuid4())[-12:])
     _model = await controller.add_model(model_name)
     # https://github.com/juju/python-libjuju/issues/267
     subprocess.check_call(['juju', 'models'])

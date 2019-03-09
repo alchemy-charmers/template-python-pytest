@@ -45,10 +45,27 @@ async def test_${fixture}_deploy(model, series, source):
                            ])
 
 
+async def test_charm_upgrade(model, app):
+    if app.name.endswith('local'):
+        pytest.skip("No need to upgrade the local deploy")
+    unit = app.units[0]
+    await model.block_until(lambda: unit.agent_status == 'idle')
+    subprocess.check_call(['juju',
+                           'upgrade-charm',
+                           '--switch={}'.format(sources[0][1]),
+                           '-m', model.info.name,
+                           app.name,
+                           ])
+    unit = app.units[0]
+    await model.block_until(lambda: unit.agent_status == 'executing')
+
+
 # Tests
 async def test_${fixture}_status(model, app):
     # Verifies status for all deployed series of the charm
     await model.block_until(lambda: app.status == 'active')
+    unit = app.units[0]
+    await model.block_until(lambda: unit.agent_status == 'idle')
 
 
 async def test_example_action(app):
