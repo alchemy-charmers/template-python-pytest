@@ -56,7 +56,6 @@ async def test_charm_upgrade(model, app):
                            '-m', model.info.name,
                            app.name,
                            ])
-    unit = app.units[0]
     await model.block_until(lambda: unit.agent_status == 'executing')
 
 
