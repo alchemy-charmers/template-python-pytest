@@ -8,11 +8,7 @@ series = ['xenial', 'bionic']
 juju_repository = os.getenv('JUJU_REPOSITORY', '.').rstrip('/')
 
 
-###################
-# Custom fixtures #
-###################
-
-
+# Custom fixtures
 @pytest.fixture
 async def apps(model):
     apps = []
@@ -36,11 +32,9 @@ async def test_${fixture}_deploy(model, series):
     await model.deploy('{}/builds/${metadata.package}'.format(juju_repository),
                        series=series,
                        application_name='${metadata.package}-{}'.format(series))
-#########
-# Tests #
-#########
 
 
+# Tests
 async def test_${fixture}_status(apps, model):
     # Verifies status for all deployed series of the charm
     for app in apps:
