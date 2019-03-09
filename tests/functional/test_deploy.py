@@ -1,6 +1,5 @@
 import os
 import pytest
-from juju.model import Model
 
 # Treat all tests as coroutines
 pytestmark = pytest.mark.asyncio
@@ -37,9 +36,6 @@ async def test_${fixture}_deploy(model, series):
     await model.deploy('{}/builds/${metadata.package}'.format(juju_repository),
                        series=series,
                        application_name='${metadata.package}-{}'.format(series))
-    assert True
-
-
 #########
 # Tests #
 #########
@@ -49,7 +45,6 @@ async def test_${fixture}_status(apps, model):
     # Verifies status for all deployed series of the charm
     for app in apps:
         await model.block_until(lambda: app.status == 'active')
-    assert True
 
 
 async def test_example_action(units):
