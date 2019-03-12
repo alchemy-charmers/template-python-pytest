@@ -14,6 +14,15 @@ sources = [('local', '{}/builds/${metadata.package}'.format(juju_repository)),
            # ('jujucharms', 'cs:...'),
            ]
 
+# Uncomment for re-using the current model, useful for debugging functional tests
+# @pytest.fixture
+# async def model():
+#     from juju.model import Model
+#     model = Model()
+#     await model.connect_current()
+#     yield model
+#     await model.disconnect()
+
 
 # Custom fixtures
 @pytest.fixture(params=series)
@@ -73,3 +82,22 @@ async def test_example_action(app):
     action = await unit.run_action('example-action')
     action = await action.wait()
     assert action.status == 'completed'
+
+
+async def test_run_command(app, utils):
+    unit = app.units[0]
+    cmd = 'hostname -i'
+    results = await utils.run_command(cmd, unit)
+    assert results['Code'] == '0'
+    assert unit.public_address in results['Stdout']
+
+
+async def test_file_stat(app, utils):
+    unit = app.units[0]
+    path = '/var/lib/juju/agents/unit-{}/charm/metadata.yaml'.format(unit.entity_id.replace('/', '-'))
+    print(path)
+    stat = await utils.file_stat(path, unit)
+    print(stat)
+    print(type(stat))
+    print(dir(stat))
+    assert 0
