@@ -14,6 +14,7 @@ import json
 import os
 import uuid
 import pytest
+import subprocess
 import juju
 from juju.controller import Controller
 from juju.errors import JujuError
@@ -36,7 +37,7 @@ EOF
 '''
 
 
-@pytest.yield_fixture(scope='module')
+@pytest.fixture(scope='module')
 def event_loop():
     '''Override the default pytest event loop to allow for fixtures using a
     broader scope'''
@@ -58,20 +59,27 @@ async def controller():
 
 
 @pytest.fixture(scope='module')
-async def model(controller):  # pylint: disable=redefined-outer-name
+async def model(controller):
     '''This model lives only for the duration of the test'''
-    model_name = "functest-{}".format(uuid.uuid4())
-    _model = await controller.add_model(model_name)
+    model_name = "functest-{}".format(str(uuid.uuid4())[-12:])
+    _model = await controller.add_model(model_name,
+                                        cloud_name=os.getenv('PYTEST_CLOUD_NAME'),
+                                        region=os.getenv('PYTEST_CLOUD_REGION'),
+                                        )
+    # https://github.com/juju/python-libjuju/issues/267
+    subprocess.check_call(['juju', 'models'])
+    while model_name not in await controller.list_models():
+        await asyncio.sleep(1)
     yield _model
     await _model.disconnect()
-    if not os.getenv('test_preserve_model'):
+    if not os.getenv('PYTEST_KEEP_MODEL'):
         await controller.destroy_model(model_name)
         while model_name in await controller.list_models():
             await asyncio.sleep(1)
 
 
 @pytest.fixture
-async def get_app(model):  # pylint: disable=redefined-outer-name
+async def get_app(model):
     '''Returns the application requested'''
     async def _get_app(name):
         try:
@@ -82,7 +90,7 @@ async def get_app(model):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def get_unit(model):  # pylint: disable=redefined-outer-name
+async def get_unit(model):
     '''Returns the requested <app_name>/<unit_number> unit'''
     async def _get_unit(name):
         try:
@@ -94,7 +102,7 @@ async def get_unit(model):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def get_entity(get_unit, get_app):  # pylint: disable=redefined-outer-name
+async def get_entity(get_unit, get_app):
     '''Returns a unit or an application'''
     async def _get_entity(name):
         try:
@@ -108,7 +116,7 @@ async def get_entity(get_unit, get_app):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def run_command(get_unit):  # pylint: disable=redefined-outer-name
+async def run_command(get_unit):
     '''
     Runs a command on a unit.
 
@@ -127,7 +135,7 @@ async def run_command(get_unit):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def file_stat(run_command):  # pylint: disable=redefined-outer-name
+async def file_stat(run_command):
     '''
     Runs stat on a file
 
@@ -142,7 +150,7 @@ async def file_stat(run_command):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def file_contents(run_command):  # pylint: disable=redefined-outer-name
+async def file_contents(run_command):
     '''
     Returns the contents of a file
 
@@ -157,7 +165,7 @@ async def file_contents(run_command):  # pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
-async def reconfigure_app(get_app, model):  # pylint: disable=redefined-outer-name
+async def reconfigure_app(get_app, model):
     '''Applies a different config to the requested app'''
     async def _reconfigure_app(cfg, target):
         application = (
