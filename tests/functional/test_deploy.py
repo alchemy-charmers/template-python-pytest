@@ -1,6 +1,7 @@
 import os
 import pytest
 import subprocess
+import stat
 
 # Treat all tests as coroutines
 pytestmark = pytest.mark.asyncio
@@ -14,8 +15,9 @@ sources = [('local', '{}/builds/${metadata.package}'.format(juju_repository)),
            # ('jujucharms', 'cs:...'),
            ]
 
+
 # Uncomment for re-using the current model, useful for debugging functional tests
-# @pytest.fixture
+# @pytest.fixture(scope='module')
 # async def model():
 #     from juju.model import Model
 #     model = Model()
@@ -95,9 +97,7 @@ async def test_run_command(app, utils):
 async def test_file_stat(app, utils):
     unit = app.units[0]
     path = '/var/lib/juju/agents/unit-{}/charm/metadata.yaml'.format(unit.entity_id.replace('/', '-'))
-    print(path)
-    stat = await utils.file_stat(path, unit)
-    print(stat)
-    print(type(stat))
-    print(dir(stat))
-    assert 0
+    fstat = await utils.file_stat(path, unit)
+    assert stat.filemode(fstat.st_mode) == '-rw-r--r--'
+    assert fstat.st_uid is 0
+    assert fstat.st_gid is 0

@@ -1,5 +1,6 @@
 import pickle
 import juju
+import base64
 
 # from juju.errors import JujuError
 
@@ -55,6 +56,24 @@ class JujuUtils:
         action = await unit.run(cmd)
         return action.results
 
+    async def remote_object(self, imports, remote_cmd, target):
+        '''
+        Runs command on target machine and returns a python object of the result
+
+        :param imports: Imports needed for the command to run
+        :param remote_cmd: The python command to execute
+        :param target: Unit object or unit name string
+        '''
+        python3 = "python3 -c '{}'"
+        python_cmd = ('import pickle;'
+                      'import base64;'
+                      '{}'
+                      'print(base64.b64encode(pickle.dumps({})), end="")'
+                      .format(imports, remote_cmd))
+        cmd = python3.format(python_cmd)
+        results = await self.run_command(cmd, target)
+        return pickle.loads(base64.b64decode(bytes(results['Stdout'][2:-1], 'utf8')))
+
     async def file_stat(self, path, target):
         '''
         Runs stat on a file
@@ -62,17 +81,30 @@ class JujuUtils:
         :param path: File path
         :param target: Unit object or unit name string
         '''
-        cmd = "python3 -c '{}'"
-        python_cmd = ('import os;'
-                      'import pickle;'
-                      'import sys;'
-                      'pickle.dump(os.stat("{}"), sys.stdout.buffer)'
+        imports = 'import os;'
+        python_cmd = ('os.stat("{}")'
                       .format(path))
-        cmd = cmd.format(python_cmd)
-        print(cmd)
-        results = await self.run_command(cmd, target)
-        print(results['Stdout'])
-        return pickle.loads(results['Stdout'].encode('utf8'))
+        print("Calling remote cmd: " + python_cmd)
+        return await self.remote_object(imports, python_cmd, target)
+
+    # async def file_stat(self, path, target):
+    #     '''
+    #     Runs stat on a file
+
+    #     :param path: File path
+    #     :param target: Unit object or unit name string
+    #     '''
+    #     cmd = "python3 -c '{}'"
+    #     python_cmd = ('import os;'
+    #                   'import pickle;'
+    #                   'import base64;'
+    #                   'print(base64.b64encode(pickle.dumps(os.stat("{}"))), end="")'
+    #                   .format(path))
+    #     cmd = cmd.format(python_cmd)
+    #     print(cmd)
+    #     results = await self.run_command(cmd, target)
+    #     print(results['Stdout'])
+    #     return pickle.loads(base64.b64decode(bytes(results['Stdout'][2:-1], 'utf8')))
 
     async def file_contents(self, path, target):
         '''
