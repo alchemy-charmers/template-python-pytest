@@ -41,6 +41,7 @@ async def test_${fixture}_deploy(model, series, source):
                            'deploy',
                            source[1],
                            '-m', model.info.name,
+                           '--series', series,
                            application_name,
                            ])
 
