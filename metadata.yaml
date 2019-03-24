@@ -11,6 +11,7 @@ subordinate: false
 series:
   - bionic
   - xenial
+  - cosmic
 # provides:
 #   provides-relation:
 #     interface: interface-name

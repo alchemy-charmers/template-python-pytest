@@ -99,5 +99,5 @@ async def test_file_stat(app, utils):
     path = '/var/lib/juju/agents/unit-{}/charm/metadata.yaml'.format(unit.entity_id.replace('/', '-'))
     fstat = await utils.file_stat(path, unit)
     assert stat.filemode(fstat.st_mode) == '-rw-r--r--'
-    assert fstat.st_uid is 0
-    assert fstat.st_gid is 0
+    assert fstat.st_uid == 0
+    assert fstat.st_gid == 0
