@@ -43,18 +43,16 @@ async def app(model, series, source):
     return await model._wait_for_new('application', app_name)
 
 
-async def test_${fixture}_deploy(model, series, source):
+async def test_${fixture}_deploy(model, series, source, request):
     # Starts a deploy for each series
     # Using subprocess b/c libjuju fails with JAAS
     # https://github.com/juju/python-libjuju/issues/221
     application_name = '${metadata.package}-{}-{}'.format(series, source[0])
-    subprocess.check_call(['juju',
-                           'deploy',
-                           source[1],
-                           '-m', model.info.name,
-                           '--series', series,
-                           application_name,
-                           ])
+    cmd = ['juju', 'deploy', source[1], '-m', model.info.name,
+            '--series', series, application_name]
+    if request.node.get_closest_marker('xfail'):
+        cmd.append('--force')
+    subprocess.check_call(cmd)
 
 
 async def test_charm_upgrade(model, app):
