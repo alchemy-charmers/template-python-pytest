@@ -86,18 +86,18 @@ async def test_example_action(app):
     assert action.status == 'completed'
 
 
-async def test_run_command(app, utils):
+async def test_run_command(app, jujutools):
     unit = app.units[0]
     cmd = 'hostname -i'
-    results = await utils.run_command(cmd, unit)
+    results = await jujutools.run_command(cmd, unit)
     assert results['Code'] == '0'
     assert unit.public_address in results['Stdout']
 
 
-async def test_file_stat(app, utils):
+async def test_file_stat(app, jujutools):
     unit = app.units[0]
     path = '/var/lib/juju/agents/unit-{}/charm/metadata.yaml'.format(unit.entity_id.replace('/', '-'))
-    fstat = await utils.file_stat(path, unit)
+    fstat = await jujutools.file_stat(path, unit)
     assert stat.filemode(fstat.st_mode) == '-rw-r--r--'
     assert fstat.st_uid == 0
     assert fstat.st_gid == 0

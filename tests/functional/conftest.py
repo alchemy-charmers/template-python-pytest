@@ -16,7 +16,7 @@ import pytest
 import subprocess
 
 from juju.controller import Controller
-from juju_utils import JujuUtils
+from juju_tools import JujuTools
 
 
 @pytest.fixture(scope='module')
@@ -61,6 +61,6 @@ async def model(controller):
 
 
 @pytest.fixture(scope='module')
-async def utils(controller, model):
-    utils = JujuUtils(controller, model)
-    return utils
+async def jujutools(controller, model):
+    tools = JujuTools(controller, model)
+    return tools

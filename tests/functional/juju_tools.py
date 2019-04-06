@@ -5,7 +5,7 @@ import base64
 # from juju.errors import JujuError
 
 
-class JujuUtils:
+class JujuTools:
     def __init__(self, controller, model):
         self.controller = controller
         self.model = model
@@ -86,25 +86,6 @@ class JujuUtils:
                       .format(path))
         print("Calling remote cmd: " + python_cmd)
         return await self.remote_object(imports, python_cmd, target)
-
-    # async def file_stat(self, path, target):
-    #     '''
-    #     Runs stat on a file
-
-    #     :param path: File path
-    #     :param target: Unit object or unit name string
-    #     '''
-    #     cmd = "python3 -c '{}'"
-    #     python_cmd = ('import os;'
-    #                   'import pickle;'
-    #                   'import base64;'
-    #                   'print(base64.b64encode(pickle.dumps(os.stat("{}"))), end="")'
-    #                   .format(path))
-    #     cmd = cmd.format(python_cmd)
-    #     print(cmd)
-    #     results = await self.run_command(cmd, target)
-    #     print(results['Stdout'])
-    #     return pickle.loads(base64.b64decode(bytes(results['Stdout'][2:-1], 'utf8')))
 
     async def file_contents(self, path, target):
         '''
