@@ -51,6 +51,8 @@ async def test_${fixture}_deploy(model, series, source, request):
     cmd = ['juju', 'deploy', source[1], '-m', model.info.name,
             '--series', series, application_name]
     if request.node.get_closest_marker('xfail'):
+        # If series is 'xfail' force install to allow testing against versions not in
+        # metadata.yaml
         cmd.append('--force')
     subprocess.check_call(cmd)
 
