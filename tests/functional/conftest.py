@@ -18,6 +18,7 @@ import subprocess
 from juju.controller import Controller
 from juju.model import Model
 from juju_tools import JujuTools
+from juju.errors import JujuConnectionError
 
 
 @pytest.fixture(scope="module")
@@ -51,9 +52,17 @@ async def model(controller):
         full_name = "{}:{}".format(
             controller.controller_name, os.getenv("PYTEST_MODEL")
         )
-        await _model.connect(full_name)
+        try:
+            await _model.connect(full_name)
+        except JujuConnectionError:
+            # Let's create it since it's missing
+            _model = await controller.add_model(
+                model_name,
+                cloud_name=os.getenv("PYTEST_CLOUD_NAME"),
+                region=os.getenv("PYTEST_CLOUD_REGION"),
+            )
     else:
-        # Create a new model
+        # Create a new random model
         model_name = "functest-{}".format(str(uuid.uuid4())[-12:])
         _model = await controller.add_model(
             model_name,
