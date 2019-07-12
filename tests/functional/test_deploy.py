@@ -88,7 +88,7 @@ async def test_example_action(app):
 
 async def test_run_command(app, jujutools):
     unit = app.units[0]
-    cmd = 'hostname -i'
+    cmd = 'hostname --all-ip-addresses'
     results = await jujutools.run_command(cmd, unit)
     assert results['Code'] == '0'
     assert unit.public_address in results['Stdout']
