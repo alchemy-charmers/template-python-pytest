@@ -50,4 +50,36 @@ the beginning and end of the testing session, respectively. A custom
 module-scoped event loop is provided as to support fixtures with scopes beyond
 'function'.
 
+#### Test Variables
+Several environemnt variables are available to customize how functional tests
+are run.
+ * PYTEST_MODEL - If defined will use or create the provided model name. If not
+defined a model is created from a UUID.
+ * PYTEST_KEEP_MODEL - If defined will not destry the test model after testing.
+ * PYTEST_CLOUD_NAME - Specifies a Cloud Name, enables running with JAAS
+ * PYTEST_CLOUD_REGION - Specifies a Cloud Region, enables running with JAAS
+ * PYTEST_SELECT_TESTS - Run a specifc test(s) by name.
+ * PYTEST_SELECT_MARKS - Run tests by pytest Mark.
+
+For Pytest selection by test name and mark see https://docs.pytest.org/en/latest/example/markers.html
+The Marks are passed to the '-m' flag and tests to the '-k' flag in pytest.
+
+An example workflow for developing functional tests is:
+Run tests, keeping the model for iteration.
+```bash
+PYTEST_KEEP_MODEL=true PYTEST_MODEL=my-model make test
+```
+Add or modify tests and run only the new test.
+```bash
+PYTEST_KEEP_MODEL=true PYTEST_MODEL=my-model PYTEST_SELECT_TESTS=test_under_development  make test
+```
+When complete, very all tests with out a redeploy.
+```bash
+PYTEST_KEEP_MODEL=true PYTEST_MODEL=my-model PYTEST_SELECT_MARKS="not deploy"  make test
+```
+Finally, validate a full end to end test still passes
+```bash
+make test
+```
+
 Several generic fixtures are provided in conftest.py, and reuse is encouraged.
