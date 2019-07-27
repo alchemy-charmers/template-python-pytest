@@ -18,16 +18,6 @@ sources = [
 ]
 
 
-# Uncomment for re-using the current model, useful for debugging functional tests
-# @pytest.fixture(scope='module')
-# async def model():
-#     from juju.model import Model
-#     model = Model()
-#     await model.connect_current()
-#     yield model
-#     await model.disconnect()
-
-
 # Custom fixtures
 @pytest.fixture(params=series)
 def series(request):
@@ -61,6 +51,7 @@ async def test_${fixture}_deploy(model, series, source, request):
 
 
 @pytest.mark.deploy
+@pytest.mark.timeout(300)
 async def test_charm_upgrade(model, app):
     if app.name.endswith("local"):
         pytest.skip("No need to upgrade the local deploy")
@@ -80,6 +71,7 @@ async def test_charm_upgrade(model, app):
 
 
 @pytest.mark.deploy
+@pytest.mark.timeout(300)
 async def test_${fixture}_status(model, app):
     # Verifies status for all deployed series of the charm
     await model.block_until(lambda: app.status == 'active')
