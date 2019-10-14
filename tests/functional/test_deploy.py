@@ -1,7 +1,8 @@
 import os
-import pytest
-import subprocess
 import stat
+import subprocess
+
+import pytest
 
 # Treat all tests as coroutines
 pytestmark = pytest.mark.asyncio
