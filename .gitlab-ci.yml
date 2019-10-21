@@ -1,0 +1,28 @@
+---
+image: 'python:3.6'
+
+stages:
+  - test
+
+before_script:
+  - python --version
+  - pip install tox
+  - mkdir -p report/lint
+  - mkdir -p report/unit
+
+flake8:
+  stage: test
+  script:
+    - make lint 
+  artifacts:
+    paths:
+      - report/lint
+
+pytest:
+  stage: test 
+  script:
+    - make unittest
+  coverage: '/^TOTAL.+?(\d+\%)$/'
+  artifacts:
+    paths:
+      - report/unit
