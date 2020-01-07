@@ -2,6 +2,8 @@
 import mock
 import pytest
 
+from charmhelpers.core import unitdata
+
 
 # If layer options are used, add this to ${fixture}
 # and import layer in ${libfile}
@@ -53,7 +55,20 @@ def mock_charm_dir(monkeypatch):
 
 
 @pytest.fixture
-def ${fixture}(tmpdir, mock_hookenv_config, mock_charm_dir, monkeypatch):
+def mock_unit_db(monkeypatch):
+    """Mock the key value store."""
+    mock_kv = mock.Mock()
+    mock_kv.return_value = unitdata.Storage(path=":memory:")
+    monkeypatch.setattr("${libfile}.unitdata.kv", mock_kv)
+
+
+@pytest.fixture
+def ${fixture}(tmpdir,
+               mock_hookenv_config,
+               mock_charm_dir,
+               mock_unit_db,
+               monkeypatch,
+               ):
     from $libfile import $libclass
     helper = ${libclass}()
 
