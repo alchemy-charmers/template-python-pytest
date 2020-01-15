@@ -29,7 +29,7 @@ submodules:
 
 lint:
 	@echo "Running flake8"
-	@-tox -e lint
+	@tox -e lint
 
 test: lint unittest functional
 
@@ -43,7 +43,7 @@ functional: build
 build:
 	@echo "Building charm to base directory $(JUJU_REPOSITORY)"
 	@-git describe --tags > ./repo-info
-	@LAYER_PATH=./layers INTERFACE_PATH=./interfaces TERM=linux \
+	@CHARM_LAYERS_DIR=./layers CHARM_INTERFACES_DIR=./interfaces TERM=linux \
 		JUJU_REPOSITORY=$(JUJU_REPOSITORY) charm build . --force
 
 release: clean build
